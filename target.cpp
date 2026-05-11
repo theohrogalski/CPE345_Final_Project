@@ -2,13 +2,14 @@
 #include <string.h>
 #include <omnetpp.h>
 #include <customMessage_m.h>
-using namespace omnetpp;
 
+using namespace omnetpp;
 class target : public cSimpleModule {
 
 public:
 int uncertainty=0;
 int num_agents;
+int id=0;
 simtime_t delta;
 
 protected:
@@ -29,33 +30,13 @@ void target :: initialize ()
     scheduleAfter(delta, msg);
 
 }
-void checkDistance(){
-    for(int j=0;j<num_agents;j++){
-        double total_distance=0;
-        getCur
 
-        if(){
-
-        }
-
-    }
-
-
-}
 void target :: handleMessage(cMessage *msg){
-if (msg->isSelfMessage()){
+    customMessage reply = new customMessage;
+    reply->setUncertainty(uncertainty);
+    reply->setGate_num(this->id);
 
-    uncertainty++;
-    scheduleAfter(delta,msg);
-}
-else{
-    customMessage *msg = new customMessage();
-    msg->setUncertainty(uncertainty);
-    msg->setGate_num(gate_num);
-    msg->messageType(1);
-
-    send("msg","in",msg->getGate_num());
-
+    send(reply,"out",msg->getGate_num());
 }
 }
 
