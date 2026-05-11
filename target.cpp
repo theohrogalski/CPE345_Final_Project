@@ -29,13 +29,50 @@ void target :: initialize ()
     scheduleAfter(delta, msg);
 
 }
+
+void Target::decreaseUncertainty(double amount) 
+{
+    unceretainty -= amount;
+    if (uncertainty < 0) {
+        uncertainty = 0;
+    }
+}
+
 void checkDistance(){
-    for(int j=0;j<num_agents;j++){
-        double total_distance=0;
-        getCur
+    simtime_t deltaTime = simTime() - lastCheckTime;
+    lastCheckTime = simTime();
+    
+    //double tx = par("x").doubleValue();
+    //double ty = par("y").doubleValue();
 
-        if(){
+    double sensingRange = par("sensingRange").doubleValue();
 
+    auto* agentPosition = check_and_cast<inet::IMobility *>(getSubModule("mobility"));
+    inet::Coord agentPos = agentPosition->getCurrentPosition();
+
+    cModule *parent = getParentModule();
+    
+    for(int j=0;j<parent->submoduleCount();j++){
+       
+        cModule *sub = parent->getTarget(j);
+        
+        if (std::string(sub->getName()).find("agent") != std string::npos) {
+
+            auto* tm = check_and_cast<inet::IMobility *>(sub->getSubmodule("mobility"));
+            double distance = agentPos.distance(tm->getCurrentPosition());
+            
+            //double ax = sub->par("x").doubleValue();
+            //double ay = sub->par("y").doubleValue();
+            //double dx = tx - ax;
+            //double dy = ty - ay;
+            //double distance = sqrt(dx * dx + dy * dy);
+
+            if (distance <= sensingRange) {
+                Target *t = check_and_cast<Target *>(sub);
+
+                double reductionRate = 5.0;
+                t->decreaseUncertainty(reductionRate * deltaTime.dbl());
+            }
         }
 
     }
