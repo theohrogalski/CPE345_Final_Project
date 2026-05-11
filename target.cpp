@@ -39,7 +39,7 @@ void Target::decreaseUncertainty(double amount)
 }
 
 void checkDistance(){
-    simtime_t deltaTime = simTime() - lastCheckTime;
+    delta = simTime() - lastCheckTime;
     lastCheckTime = simTime();
     
     //double tx = par("x").doubleValue();
@@ -71,7 +71,7 @@ void checkDistance(){
                 Target *t = check_and_cast<Target *>(sub);
 
                 double reductionRate = 5.0;
-                t->decreaseUncertainty(reductionRate * deltaTime.dbl());
+                t->decreaseUncertainty(reductionRate * delta.dbl());
             }
         }
 
@@ -84,6 +84,10 @@ if (msg->isSelfMessage()){
 
     uncertainty++;
     scheduleAfter(delta,msg);
+
+    simtime_t delta = simTime() - msg->getSendingTime();
+    checkDistance(delta);
+    scheduleAt(simTime() + 1.0, msg);
 }
 else{
     customMessage *msg = new customMessage();
