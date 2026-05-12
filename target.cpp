@@ -2,6 +2,7 @@
 #include <string.h>
 #include <omnetpp.h>
 #include <customMessage_m.h>
+#include "inet/mobility/contract/IMobility.h"
 
 using namespace omnetpp;
 class target : public cSimpleModule {
