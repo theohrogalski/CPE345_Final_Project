@@ -8,7 +8,7 @@ using namespace omnetpp;
 class target : public cSimpleModule {
 
 public:
-int uncertainty=0;
+double uncertainty=0;
 int num_agents;
 int id=0;
 simtime_t delta;
@@ -16,7 +16,7 @@ simtime_t delta;
 protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg) override;
-    virtual void checkDistance();
+    virtual void checkDistance(simtime_t deltaTime);
     virtual void increaseUncertainty(double amount);
     virtual void decreaseUncertainty(double amount);
 };
