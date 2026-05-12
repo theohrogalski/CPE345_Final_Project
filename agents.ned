@@ -13,6 +13,10 @@ simple agent
 gates:
     inout in;
     inout out;
+    submodules:
+        mobility : agentMobility{
+        @display("p=100,100");
+        }
 
 }
 

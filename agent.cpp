@@ -4,9 +4,9 @@
 #include <vector>
 #include <customMessage_m.h>
 #include "agentMobility.h"
-
 using namespace omnetpp;
-
+using namespace inet;
+using namespace std;
 class agent : public cSimpleModule
 {
 private:
@@ -14,9 +14,8 @@ private:
     int num_targets;
     int id;
     std::vector<int> target_positions;
-    vector<int> targetUncertainties;
-
-
+    std::vector<int> targetUncertainties;
+    agentMobility *mobility;
 protected:
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
@@ -29,10 +28,13 @@ protected:
 Define_Module(agent);
 
 void agent::initialize(){
-    getParentModule()->getSubmodule("mobility");
-    simetime_t decisionInterval = par("decisionInterval");
+    cModule *node = getParentModule();
 
-    cMessage selectAction = new cMessage("selectAction");
+    cModule *mobility = node->getSubmodule("agentMobility");
+
+    simtime_t decisionInterval = par("decisionInterval");
+
+    cMessage *selectAction = new cMessage("selectAction");
 
     scheduleAt(simTime()+decisionInterval,selectAction);
 
@@ -47,9 +49,11 @@ void agent::initialize(){
     }
 
 void agent::sendAllUncertainties(){
-    for(int T=0;T<num_Targets;T++){
-        cMessage getUnc = new cMessage("getUncertainty");
-        send(("targ%d",T),getUnc);
+    for(int T=0;T<num_targets;T++){
+
+        cMessage *getUnc = new cMessage();
+        string target = "targ"+std::to_string(T);
+        send(getUnc,target.c_str());
     }
 
 }
@@ -57,11 +61,15 @@ void agent::sendAllUncertainties(){
 Coord agent::getCoordForTarget(){
     Coord max_target_coord;
     int max_uncertainty=-1;
+    int x_c=0;
+    int y_c=0;
 for(int i=0; i<num_targets;i++){
-if(target_uncertainties.at(i)>max_uncertainty){
-    max_uncertainty=target_uncertainties.at(i);
-    int x_c =(par(("targ%dx"),i));
-    int y_c=(par(("targ%dy"),i));
+if(targetUncertainties.at(i)>max_uncertainty){
+    max_uncertainty=targetUncertainties.at(i);
+    string targx="targ"+std::to_string(i)+"x" ;
+    string targy = "targ" + std::to_string(i) + "y" ;
+    int x_c =par(targx.c_str());
+    int y_c=par(targy.c_str());
 }
 }
 Coord p;
@@ -81,11 +89,12 @@ void agent::handleMessage(cMessage *msg){
            scheduleAt(SimTime()+decisionInterval,actionSelection);
 
     }
+
     else{
 
-        customMessage newmsg = check_and_cast<*customMessage> msg;
-        gate_num = newmsg->getGate_num();
-        target_uncertainties.at(gate_num) = newmsg->getUncertainty();
+        customMessage *newmsg = check_and_cast<customMessage*>(msg);
+        int gate_num = newmsg->getGate_num();
+        targetUncertainties.at(gate_num) = newmsg->getUncertainty();
 
     }
 

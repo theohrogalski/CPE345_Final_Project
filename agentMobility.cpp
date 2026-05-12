@@ -39,7 +39,7 @@ void agentMobility::setTargetPosition()
     else {
 
         //Make change here vvvvv
-        targetPosition = getDeterministcPosition();
+     //   targetPosition = getDeterministcPosition();
         double speed = speedParameter->doubleValue();
         double distance = lastPosition.distance(targetPosition);
         simtime_t travelTime = distance / speed;

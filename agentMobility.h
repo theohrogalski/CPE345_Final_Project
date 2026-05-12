@@ -9,7 +9,7 @@
 #ifndef __INET_RANDOMWAYPOINTMOBILITY_H
 #define __INET_RANDOMWAYPOINTMOBILITY_H
 //TODO: Fix the below broken include
-#include "inet4.5/src/mobility/base/LineSegmentsMobilityBase.h"
+#include "inet/mobility/base/LineSegmentsMobilityBase.h"
 
 namespace inet {
 
@@ -21,6 +21,8 @@ namespace inet {
  */
 class INET_API agentMobility : public LineSegmentsMobilityBase
 {
+private:
+    agentMobility *mobility;
   protected:
     bool nextMoveIsWait;
     cPar *speedParameter = nullptr;
@@ -42,7 +44,7 @@ class INET_API agentMobility : public LineSegmentsMobilityBase
 
   public:
     agentMobility();
-    virtual void setCoordinates() override;
+    virtual void setCoordinates(Coord input);
     virtual double getMaxSpeed() const override;
 
 };
