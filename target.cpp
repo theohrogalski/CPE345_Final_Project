@@ -31,12 +31,19 @@ void target :: initialize ()
 
 }
 
-void Target::decreaseUncertainty(double amount) 
+void Target::increaseUncertainty(double amount) 
 {
-    unceretainty -= amount;
-    if (uncertainty < 0) {
-        uncertainty = 0;
-    }
+    double u = par("uncertainty").doubleValue();
+    u += amount;
+
+    par("uncertainty").setDoubleValue(u);
+}
+
+void Target::decreaseUncertainty(double amount) {
+    double u = par("uncertainty").doubleValue();
+    u -= amount;
+    if (u < 0) u = 0;
+    par("uncertainty").setDoubleValue(u);
 }
 
 void checkDistance(){
