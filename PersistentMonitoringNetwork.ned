@@ -2,12 +2,13 @@ import inet.mobility.agentMobility
 
 simple agentMobility {
 	parameters:
-		@class(inet::agentMobility);
+		@class(inet::AgentMobility);
 		double speed = default(10mps) @unit(mps);
 		double waitTime = default(0s) @unit(s);
 		bool isStationary = default(false);
 }
-simple Agent
+
+module Agent
 {
     parameters:
 		@display("i=device/pocketpc;is=s");
@@ -23,7 +24,11 @@ simple Agent
 simple Target
 {
     parameters:
-        int sensingRange = default(10);
+        double sensingRange = default(10.0m);
+		double reductionRate = default(0.5);
+		double decayRate = default(0.1);
+		double uncertainty = default(0);
+		int id;
     gates:
         input in[];
         output out[];
@@ -34,27 +39,27 @@ network PersistentMonitoringNetwork
     @display("bgb=446,301");
     submodules:
         target1: Target {
-
+			id = 1;
             @display("p=260,27");
         }
 
         target2: Target {
-
+			id = 2;
             @display("p=105,94");
         }
 
         target3: Target {
-
+			id = 3;
             @display("p=144,234");
         }
 
         target4: Target {
-
+			id = 4;
             @display("p=321,234");
         }
 
         target5: Target {
-
+			id = 5;
             @display("p=386,94");
         }
 
