@@ -1,5 +1,5 @@
 import target;
-import agents; 
+import agent; 
 network agentNetwork
 {
     @display("bgb=314.16,176.88");
