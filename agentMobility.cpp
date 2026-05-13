@@ -39,7 +39,7 @@ void agentMobility::setTargetPosition()
     else {
 
         //Make change here vvvvv
-     //   targetPosition = getDeterministcPosition();
+
         double speed = speedParameter->doubleValue();
         double distance = lastPosition.distance(targetPosition);
         simtime_t travelTime = distance / speed;
@@ -59,7 +59,7 @@ double agentMobility::getMaxSpeed() const
     return speedParameter->isExpression() ? NaN : speedParameter->doubleValue();
 }
 void agentMobility::setCoordinates(Coord input){
-go_to_here=input;
+targetPosition=input;
 }
 } // namespace inet
 

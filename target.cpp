@@ -2,89 +2,109 @@
 #include <string.h>
 #include <omnetpp.h>
 #include <customMessage_m.h>
-#include "inet/mobility/contract/IMobility.h"
-
+#include "agentMobility.h"
+#include "inet/common/ModuleAccess.h"
 using namespace omnetpp;
-class target : public cSimpleModule {
+class Target : public cSimpleModule {
 
 public:
 double sensingRange;
 double reductionRate;
+
 double decayRate;
-double uncertainty;
+cOutVector* uncertaintyStore = cOutVector("Target Uncertainties");
+
+mutable double uncertainty;
+int num_agents;
 int id;
 simtime_t delta;
 
 protected:
-    virtual void initialize();
+    virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
     virtual void checkDistance(simtime_t deltaTime);
     virtual void increaseUncertainty(double amount);
     virtual void decreaseUncertainty(double amount);
 };
 
-Define_Module(target);
+Define_Module(Target);
 
 
-void target::initialize() {
+void Target::initialize() {
     // Initialize parameters from NED
-    num_agents = par("num_agents");
     id = par("id"); 
     uncertainty = par("uncertainty").doubleValue();
-    delta = 1.0; 
+    delta = 5;
+
+    int num_agents=par("num_agents");
 
     // Create the initial self-message for the sensing loop
+    //EV<<"here3";
     cMessage *timer = new cMessage("sensingTimer");
+    //EV<<"here2";
     scheduleAt(simTime() + delta, timer);
+    //EV<<"here4";
+
 }
 
-void target::increaseUncertainty(double amount) {
+void Target::increaseUncertainty(double amount) {
     uncertainty += amount;
     par("uncertainty").setDoubleValue(uncertainty);
 }
 
-void target::decreaseUncertainty(double amount) {
+void Target::decreaseUncertainty(double amount) {
     uncertainty -= amount;
     if (uncertainty < 0) uncertainty = 0;
     par("uncertainty").setDoubleValue(uncertainty);
 }
 
-void target::checkDistance(simtime_t deltaTime) {
+void Target::checkDistance(simtime_t deltaTime) {
     double sensingRange = par("sensingRange").doubleValue();
     double reductionRate = par("reductionRate").doubleValue();
     double decayRate = par("decayRate").doubleValue();
-
-    // Get this target's position
-    auto* tm = check_and_cast<inet::IMobility *>(getSubmodule("mobility"));
-    inet::Coord targetPos = tm->getCurrentPosition();
-
+    //Get this target's position
     bool agentPresent = false;
     cModule *network = getParentModule();
+    cModule *host = this;
 
-    // Look for agents in the network
-    for (int i = 0; i < network->submoduleCount(); ++i) {
-        cModule *sub = network->getSubmodule(i);
-        if (std::string(sub->getName()).find("agent") != std::string::npos) {
-            auto* am = check_and_cast<inet::IMobility *>(sub->getSubmodule("mobility"));
-            if (targetPos.distance(am->getCurrentPosition()) <= sensingRange) {
+    // 2. Get the graphical position (x, y) directly from the simulation engine
+    // This works even if the @display string is empty/defaulted
+    auto x = atof(host->getDisplayString().getTagArg("p",0));
+    auto y = atof(host->getDisplayString().getTagArg("p",1));
+    inet::Coord TargetPos;
+    TargetPos.x=x;
+    TargetPos.y=y;
+    inet::Coord pos(x, y);    // Look for agents in the network
+    // Fix submodules problem
+    for (cModule::SubmoduleIterator it(network); !it.end(); ++it) {
+        cModule * sub = *it;
+        if (std::string(sub->getName()).find("agent") !=std::string::npos) {
+            //Another possibility
+            auto* am = check_and_cast<inet::agentMobility *>(sub);
+            //EV<<"Got past am";
+            if (TargetPos.distance(am->getCurrentPosition()) <= sensingRange) {
                 agentPresent = true;
                 break; 
             }
-        }
+
     }
 
     if (agentPresent) {
         decreaseUncertainty(reductionRate * deltaTime.dbl());
+        uncertaintyStore.collect(uncertainty);
+
     } else {
         increaseUncertainty(decayRate * deltaTime.dbl());
-    }
-}
+       uncertaintyStore.collect(uncertainty);
 
-void target::handleMessage(cMessage *msg) {
+    }
+    }}
+
+void Target::handleMessage(cMessage *msg) {
     if (msg->isSelfMessage()) {
         // Calculate the actual time elapsed since the last tick
         simtime_t elapsed = simTime() - msg->getSendingTime();
-        
+        //EV<<"Here";
         checkDistance(elapsed);
 
         // Reschedule the timer
@@ -94,9 +114,8 @@ void target::handleMessage(cMessage *msg) {
         // Handling incoming customMessage from Agents
         customMessage *incoming = check_and_cast<customMessage *>(msg);
         
-        // Create a reply (using your customMessage structure)
         customMessage *reply = new customMessage("uncertaintyReply");
-        reply->setUncertainty((int)uncertainty); // Casting back to int if your msg requires it
+        reply->setUncertainty(uncertainty);
         reply->setGate_num(this->id);
         
         // Send back through the gate the message arrived on
@@ -104,5 +123,12 @@ void target::handleMessage(cMessage *msg) {
         
         delete incoming; // Clean up the incoming message
     }
+
 }
+void Target::finish(){
+  uncertaintyStore.record();
+
+
+}
+
 

@@ -1,4 +1,4 @@
-out/clang-release//target.o: target.cpp \
+out/clang-debug//target.o: target.cpp \
   /home/rogal/omnet/omnetpp-6.0.1/include/omnetpp.h customMessage_m.h \
   agentMobility.h \
   ../inet4.5/src/inet/mobility/base/LineSegmentsMobilityBase.h \
@@ -6,7 +6,7 @@ out/clang-release//target.o: target.cpp \
   ../inet4.5/src/inet/mobility/base/MobilityBase.h \
   ../inet4.5/src/inet/common/ModuleAccess.h \
   ../inet4.5/src/inet/common/INETDefs.h \
-  ../inet4.5/src/inet/common/precompiled_release.h \
+  ../inet4.5/src/inet/common/precompiled_debug.h \
   ../inet4.5/src/inet/common/precompiled.h \
   ../inet4.5/src/inet/opp_defines.h ../inet4.5/src/inet/features.h \
   ../inet4.5/src/inet/common/Compat.h \
@@ -38,7 +38,7 @@ agentMobility.h:
 
 ../inet4.5/src/inet/common/INETDefs.h:
 
-../inet4.5/src/inet/common/precompiled_release.h:
+../inet4.5/src/inet/common/precompiled_debug.h:
 
 ../inet4.5/src/inet/common/precompiled.h:
 

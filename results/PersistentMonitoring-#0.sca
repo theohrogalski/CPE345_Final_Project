@@ -1,0 +1,153 @@
+version 3
+run PersistentMonitoring-0-20260513-15:12:08-1043
+attr configname PersistentMonitoring
+attr datetime 20260513-15:12:08
+attr datetimef 20260513-151208
+attr experiment PersistentMonitoring
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsd ""
+attr iterationvarsf ""
+attr measurement ""
+attr network PersistentMonitoringNetwork
+attr processid 1043
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+config image-path ../inet4.5/images
+config network PersistentMonitoringNetwork
+config **.networkConfiguratorModule "\"\""
+config *.visualizer.mobilityVisualizer.displayMobility true
+config *.visualizer.mobilityVisualizer.displayPositions true
+config *.visualizer.mobilityVisualizer.displayOrientations true
+config *.visualizer.mobilityVisualizer.displayVelocities true
+config *.visualizer.mobilityVisualizer.displayMovementTrails true
+config **.num_agents 3
+config sim-time-limit 1000s
+
+par PersistentMonitoringNetwork.target1 typename "\"Target\""
+par PersistentMonitoringNetwork.target1 num_agents 3
+par PersistentMonitoringNetwork.target1 sensingRange 10
+par PersistentMonitoringNetwork.target1 reductionRate 0.5
+par PersistentMonitoringNetwork.target1 decayRate 0.1
+par PersistentMonitoringNetwork.target1 uncertainty 32
+attr mutable ""
+par PersistentMonitoringNetwork.target1 id 1
+par PersistentMonitoringNetwork.target2 typename "\"Target\""
+par PersistentMonitoringNetwork.target2 num_agents 3
+par PersistentMonitoringNetwork.target2 sensingRange 10
+par PersistentMonitoringNetwork.target2 reductionRate 0.5
+par PersistentMonitoringNetwork.target2 decayRate 0.1
+par PersistentMonitoringNetwork.target2 uncertainty 32
+attr mutable ""
+par PersistentMonitoringNetwork.target2 id 2
+par PersistentMonitoringNetwork.target3 typename "\"Target\""
+par PersistentMonitoringNetwork.target3 num_agents 3
+par PersistentMonitoringNetwork.target3 sensingRange 10
+par PersistentMonitoringNetwork.target3 reductionRate 0.5
+par PersistentMonitoringNetwork.target3 decayRate 0.1
+par PersistentMonitoringNetwork.target3 uncertainty 32
+attr mutable ""
+par PersistentMonitoringNetwork.target3 id 3
+par PersistentMonitoringNetwork.target4 typename "\"Target\""
+par PersistentMonitoringNetwork.target4 num_agents 3
+par PersistentMonitoringNetwork.target4 sensingRange 10
+par PersistentMonitoringNetwork.target4 reductionRate 0.5
+par PersistentMonitoringNetwork.target4 decayRate 0.1
+par PersistentMonitoringNetwork.target4 uncertainty 32
+attr mutable ""
+par PersistentMonitoringNetwork.target4 id 4
+par PersistentMonitoringNetwork.target5 typename "\"Target\""
+par PersistentMonitoringNetwork.target5 num_agents 3
+par PersistentMonitoringNetwork.target5 sensingRange 10
+par PersistentMonitoringNetwork.target5 reductionRate 0.5
+par PersistentMonitoringNetwork.target5 decayRate 0.1
+par PersistentMonitoringNetwork.target5 uncertainty 32
+attr mutable ""
+par PersistentMonitoringNetwork.target5 id 5
+par PersistentMonitoringNetwork.agent1 typename "\"agentMobility\""
+par PersistentMonitoringNetwork.agent1 faceForward false
+par PersistentMonitoringNetwork.agent1 constraintAreaMinX 0m
+attr unit m
+par PersistentMonitoringNetwork.agent1 constraintAreaMaxX 500m
+attr unit m
+par PersistentMonitoringNetwork.agent1 constraintAreaMinY 0m
+attr unit m
+par PersistentMonitoringNetwork.agent1 constraintAreaMaxY 500m
+attr unit m
+par PersistentMonitoringNetwork.agent1 constraintAreaMinZ 0m
+attr unit m
+par PersistentMonitoringNetwork.agent1 constraintAreaMaxZ 0m
+attr unit m
+par PersistentMonitoringNetwork.agent1 subjectModule "\"\""
+par PersistentMonitoringNetwork.agent1 coordinateSystemModule "\"\""
+par PersistentMonitoringNetwork.agent1 updateDisplayString true
+par PersistentMonitoringNetwork.agent1 ubjectModule "\"^\""
+par PersistentMonitoringNetwork.agent1 updateInterval 1s
+attr unit s
+par PersistentMonitoringNetwork.agent1 displayStringTextFormat "\"\""
+par PersistentMonitoringNetwork.agent1 initFromDisplayString false
+par PersistentMonitoringNetwork.agent1 speed 10mps
+attr unit mps
+par PersistentMonitoringNetwork.agent1 waitTime 0s
+attr unit s
+par PersistentMonitoringNetwork.agent1 isStationary false
+par PersistentMonitoringNetwork.agent2 typename "\"agentMobility\""
+par PersistentMonitoringNetwork.agent2 faceForward false
+par PersistentMonitoringNetwork.agent2 constraintAreaMinX 0m
+attr unit m
+par PersistentMonitoringNetwork.agent2 constraintAreaMaxX 500m
+attr unit m
+par PersistentMonitoringNetwork.agent2 constraintAreaMinY 0m
+attr unit m
+par PersistentMonitoringNetwork.agent2 constraintAreaMaxY 500m
+attr unit m
+par PersistentMonitoringNetwork.agent2 constraintAreaMinZ 0m
+attr unit m
+par PersistentMonitoringNetwork.agent2 constraintAreaMaxZ 0m
+attr unit m
+par PersistentMonitoringNetwork.agent2 subjectModule "\"\""
+par PersistentMonitoringNetwork.agent2 coordinateSystemModule "\"\""
+par PersistentMonitoringNetwork.agent2 updateDisplayString true
+par PersistentMonitoringNetwork.agent2 ubjectModule "\"^\""
+par PersistentMonitoringNetwork.agent2 updateInterval 1s
+attr unit s
+par PersistentMonitoringNetwork.agent2 displayStringTextFormat "\"\""
+par PersistentMonitoringNetwork.agent2 initFromDisplayString false
+par PersistentMonitoringNetwork.agent2 speed 10mps
+attr unit mps
+par PersistentMonitoringNetwork.agent2 waitTime 0s
+attr unit s
+par PersistentMonitoringNetwork.agent2 isStationary false
+par PersistentMonitoringNetwork.agent3 typename "\"agentMobility\""
+par PersistentMonitoringNetwork.agent3 faceForward false
+par PersistentMonitoringNetwork.agent3 constraintAreaMinX 0m
+attr unit m
+par PersistentMonitoringNetwork.agent3 constraintAreaMaxX 500m
+attr unit m
+par PersistentMonitoringNetwork.agent3 constraintAreaMinY 0m
+attr unit m
+par PersistentMonitoringNetwork.agent3 constraintAreaMaxY 500m
+attr unit m
+par PersistentMonitoringNetwork.agent3 constraintAreaMinZ 0m
+attr unit m
+par PersistentMonitoringNetwork.agent3 constraintAreaMaxZ 0m
+attr unit m
+par PersistentMonitoringNetwork.agent3 subjectModule "\"\""
+par PersistentMonitoringNetwork.agent3 coordinateSystemModule "\"\""
+par PersistentMonitoringNetwork.agent3 updateDisplayString true
+par PersistentMonitoringNetwork.agent3 ubjectModule "\"^\""
+par PersistentMonitoringNetwork.agent3 updateInterval 1s
+attr unit s
+par PersistentMonitoringNetwork.agent3 displayStringTextFormat "\"\""
+par PersistentMonitoringNetwork.agent3 initFromDisplayString false
+par PersistentMonitoringNetwork.agent3 speed 10mps
+attr unit mps
+par PersistentMonitoringNetwork.agent3 waitTime 0s
+attr unit s
+par PersistentMonitoringNetwork.agent3 isStationary false
+par PersistentMonitoringNetwork typename "\"PersistentMonitoringNetwork\""
+par PersistentMonitoringNetwork num_agents 3
+

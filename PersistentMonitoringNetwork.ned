@@ -1,33 +1,40 @@
-import inet.mobility.agentMobility
 
 simple agentMobility {
+    
 	parameters:
-		@class(inet::AgentMobility);
+		@class(inet::agentMobility);
+		@display("i=device/pocketpc;is=s");
+        bool faceForward = false;
+        double constraintAreaMinX @unit(m) = default(0m);
+        double constraintAreaMaxX @unit(m) = default(500m);
+        double constraintAreaMinY @unit(m) = default(0m);
+        double constraintAreaMaxY @unit(m) = default(500m);
+        double constraintAreaMinZ @unit(m) = default(0m);
+        double constraintAreaMaxZ @unit(m) = default(0m);
+        string subjectModule = "";
+        string coordinateSystemModule = "";
+        bool updateDisplayString = true;
+string ubjectModule = "^";
+double updateInterval @unit(s) = 1s;
+
+string displayStringTextFormat = "";
+bool initFromDisplayString = false;
 		double speed = default(10mps) @unit(mps);
 		double waitTime = default(0s) @unit(s);
 		bool isStationary = default(false);
-}
-
-module Agent
-{
-    parameters:
-		@display("i=device/pocketpc;is=s");
-    gates:
+		gates:
         input in[];
         output out[];
-    submodules:
-		mobility: agentMobility {
-			@display("p=50,50");
 		}
-}
 
 simple Target
 {
     parameters:
-        double sensingRange = default(10.0m);
+        int num_agents;
+        double sensingRange = default(10.0);
 		double reductionRate = default(0.5);
 		double decayRate = default(0.1);
-		double uncertainty = default(0);
+		volatile double uncertainty @mutable = default(0);
 		int id;
     gates:
         input in[];
@@ -36,10 +43,15 @@ simple Target
 
 network PersistentMonitoringNetwork
 {
+    parameters:
+        int num_agents;
+        
     @display("bgb=446,301");
     submodules:
+        
         target1: Target {
 			id = 1;
+			
             @display("p=260,27");
         }
 
@@ -63,23 +75,23 @@ network PersistentMonitoringNetwork
             @display("p=386,94");
         }
 
-        agent1: Agent {
+        agent1: agentMobility {
 
             @display("p=183,94");
         }
 
-        agent2: Agent {
+        agent2: agentMobility {
 
             @display("p=243,195");
         }
 
-        agent3: Agent {
+        agent3: agentMobility {
 
             @display("p=299,115");
         }
 
     connections:
-        target1.out++ --> agent1.in++;
+        target1.out++--> agent1.in++;
         agent1.out++ --> target1.in++;
         target2.out++ --> agent1.in++;
         agent1.out++ --> target2.in++;

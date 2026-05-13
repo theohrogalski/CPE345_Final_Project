@@ -23,12 +23,12 @@ class INET_API agentMobility : public LineSegmentsMobilityBase
 {
 private:
     agentMobility *mobility;
+
   protected:
     bool nextMoveIsWait;
-    cPar *speedParameter = nullptr;
-    cPar *waitTimeParameter = nullptr;
+    cPar *speedParameter=nullptr;
+    cPar *waitTimeParameter=nullptr;
     bool hasWaitTime;
-    Coord go_to_here;
 
   protected:
     virtual int numInitStages() const override { return NUM_INIT_STAGES; }
