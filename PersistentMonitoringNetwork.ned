@@ -1,38 +1,35 @@
-import target;
-import agents; 
-network PersistentMonitoringNetwork
-{
+simple Agent {
     parameters:
-        int num_agents = default(3);
-        int num_targets = default(5);
-        double globalSensingRange = default(20m);
-        @display("bgb=500,500");
-
-  submodules: 
-        visualizer: IntegratedMultiVisualizer {
-           @display("p=50,50");
-        }
-
-        agent[num_agents]: Agent {
-            parameters:
-                @display("p=100,100,ring;i=device/pocketpc,red");
-                sensingRange = parent.globalSensingRange;
-        }
-
-        target[num_targets]: Target {
-            parameters:
-                @display("p=250,250,matrix,100,100;i=block/target,gold");
-                id = index; // Assigns the array index as the ID
-        }
-
-        connections:
-        for (i=0; i<num_targets;i++) {
-            for (j=0; j<num_agents; j++) {
-            target[i].out++ --> { delay = 10ms; } --> agent[j].in++;
-            }
-        }
+        
+    gates:
+        input in;
+        output out;
 }
 
+simple Target {
+    parameters;
+        int sensingRange = default(10);
+    gates;
+        input in;
+        output out;
+}
 
+network PersistentMonitoringNetwork
+{
+   submodules:
+        // Using arrays is much cleaner than target1, target2, etc.
+        target[5]: Target; 
+        agent[3]: Agent;
+
+    connections:
+        // Nested loop: For every target (i), connect to every agent (j)
+        for i=0..4, for j=0..2 {
+            // Target to Agent
+            target[i].out++ --> agent[j].in++;
+            
+            // Agent to Target
+            agent[j].out++ --> target[i].in++;
+        }
+}
 
 
