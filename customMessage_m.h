@@ -24,7 +24,7 @@ class customMessage;
  * {
  *     int message_type = 0;
  *     int gate_num = 0;
- *     int uncertainty = 0;
+ *     double uncertainty = 0;
  * }
  * </pre>
  */
@@ -33,7 +33,7 @@ class customMessage : public ::omnetpp::cMessage
   protected:
     int message_type = 0;
     int gate_num = 0;
-    int uncertainty = 0;
+    double uncertainty = 0;
 
   private:
     void copy(const customMessage& other);
@@ -56,8 +56,8 @@ class customMessage : public ::omnetpp::cMessage
     virtual int getGate_num() const;
     virtual void setGate_num(int gate_num);
 
-    virtual int getUncertainty() const;
-    virtual void setUncertainty(int uncertainty);
+    virtual double getUncertainty() const;
+    virtual void setUncertainty(double uncertainty);
 };
 
 inline void doParsimPacking(omnetpp::cCommBuffer *b, const customMessage& obj) {obj.parsimPack(b);}

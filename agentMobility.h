@@ -27,12 +27,17 @@ private:
   protected:
     bool nextMoveIsWait;
     cPar *speedParameter=nullptr;
+
     cPar *waitTimeParameter=nullptr;
     bool hasWaitTime;
-
-  protected:
+    int num_targets;
     virtual int numInitStages() const override { return NUM_INIT_STAGES; }
+    virtual void handleMessage(cMessage *msg) override;
+       void actionSelection();
+       std::vector<double> targetUncertainties;
 
+       void sendAllUncertainties();
+       Coord getCoordForTarget();
     /** @brief Initializes mobility model parameters.*/
     virtual void initialize(int stage) override;
 

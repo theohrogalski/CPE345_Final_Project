@@ -216,12 +216,12 @@ void customMessage::setGate_num(int gate_num)
     this->gate_num = gate_num;
 }
 
-int customMessage::getUncertainty() const
+double customMessage::getUncertainty() const
 {
     return this->uncertainty;
 }
 
-void customMessage::setUncertainty(int uncertainty)
+void customMessage::setUncertainty(double uncertainty)
 {
     this->uncertainty = uncertainty;
 }
@@ -356,7 +356,7 @@ const char *customMessageDescriptor::getFieldTypeString(int field) const
     static const char *fieldTypeStrings[] = {
         "int",    // FIELD_message_type
         "int",    // FIELD_gate_num
-        "int",    // FIELD_uncertainty
+        "double",    // FIELD_uncertainty
     };
     return (field >= 0 && field < 3) ? fieldTypeStrings[field] : nullptr;
 }
@@ -443,7 +443,7 @@ std::string customMessageDescriptor::getFieldValueAsString(omnetpp::any_ptr obje
     switch (field) {
         case FIELD_message_type: return long2string(pp->getMessage_type());
         case FIELD_gate_num: return long2string(pp->getGate_num());
-        case FIELD_uncertainty: return long2string(pp->getUncertainty());
+        case FIELD_uncertainty: return double2string(pp->getUncertainty());
         default: return "";
     }
 }
@@ -462,7 +462,7 @@ void customMessageDescriptor::setFieldValueAsString(omnetpp::any_ptr object, int
     switch (field) {
         case FIELD_message_type: pp->setMessage_type(string2long(value)); break;
         case FIELD_gate_num: pp->setGate_num(string2long(value)); break;
-        case FIELD_uncertainty: pp->setUncertainty(string2long(value)); break;
+        case FIELD_uncertainty: pp->setUncertainty(string2double(value)); break;
         default: throw omnetpp::cRuntimeError("Cannot set field %d of class 'customMessage'", field);
     }
 }
@@ -498,7 +498,7 @@ void customMessageDescriptor::setFieldValue(omnetpp::any_ptr object, int field, 
     switch (field) {
         case FIELD_message_type: pp->setMessage_type(omnetpp::checked_int_cast<int>(value.intValue())); break;
         case FIELD_gate_num: pp->setGate_num(omnetpp::checked_int_cast<int>(value.intValue())); break;
-        case FIELD_uncertainty: pp->setUncertainty(omnetpp::checked_int_cast<int>(value.intValue())); break;
+        case FIELD_uncertainty: pp->setUncertainty(value.doubleValue()); break;
         default: throw omnetpp::cRuntimeError("Cannot set field %d of class 'customMessage'", field);
     }
 }

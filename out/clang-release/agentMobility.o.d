@@ -1,4 +1,5 @@
-out/clang-release//agentMobility.o: agentMobility.cpp agentMobility.h \
+out/clang-release//agentMobility.o: agentMobility.cpp \
+  /home/rogal/omnet/omnetpp-6.0.1/include/omnetpp.h agentMobility.h \
   ../inet4.5/src/inet/mobility/base/LineSegmentsMobilityBase.h \
   ../inet4.5/src/inet/mobility/base/MovingMobilityBase.h \
   ../inet4.5/src/inet/mobility/base/MobilityBase.h \
@@ -6,7 +7,6 @@ out/clang-release//agentMobility.o: agentMobility.cpp agentMobility.h \
   ../inet4.5/src/inet/common/INETDefs.h \
   ../inet4.5/src/inet/common/precompiled_release.h \
   ../inet4.5/src/inet/common/precompiled.h \
-  /home/rogal/omnet/omnetpp-6.0.1/include/omnetpp.h \
   ../inet4.5/src/inet/opp_defines.h ../inet4.5/src/inet/features.h \
   ../inet4.5/src/inet/common/Compat.h \
   ../inet4.5/src/inet/common/InitStages.h \
@@ -19,7 +19,9 @@ out/clang-release//agentMobility.o: agentMobility.cpp agentMobility.h \
   ../inet4.5/src/inet/common/geometry/common/EulerAngles.h \
   ../inet4.5/src/inet/common/Units.h \
   ../inet4.5/src/inet/common/geometry/common/Quaternion.h \
-  ../inet4.5/src/inet/mobility/contract/IMobility.h
+  ../inet4.5/src/inet/mobility/contract/IMobility.h customMessage_m.h
+
+/home/rogal/omnet/omnetpp-6.0.1/include/omnetpp.h:
 
 agentMobility.h:
 
@@ -36,8 +38,6 @@ agentMobility.h:
 ../inet4.5/src/inet/common/precompiled_release.h:
 
 ../inet4.5/src/inet/common/precompiled.h:
-
-/home/rogal/omnet/omnetpp-6.0.1/include/omnetpp.h:
 
 ../inet4.5/src/inet/opp_defines.h:
 
@@ -66,3 +66,5 @@ agentMobility.h:
 ../inet4.5/src/inet/common/geometry/common/Quaternion.h:
 
 ../inet4.5/src/inet/mobility/contract/IMobility.h:
+
+customMessage_m.h:

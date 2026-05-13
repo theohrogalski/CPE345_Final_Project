@@ -12,9 +12,8 @@ double sensingRange;
 double reductionRate;
 
 double decayRate;
-cOutVector* uncertaintyStore = cOutVector("Target Uncertainties");
-
-mutable double uncertainty;
+cOutVector uncertaintystore;
+double uncertainty;
 int num_agents;
 int id;
 simtime_t delta;
@@ -31,8 +30,11 @@ Define_Module(Target);
 
 
 void Target::initialize() {
+    EV_WARN<<"target init start"<<endl;
     // Initialize parameters from NED
     id = par("id"); 
+    ////uncertaintystore.setName("Target_Uncertainties");
+
     uncertainty = par("uncertainty").doubleValue();
     delta = 5;
 
@@ -44,6 +46,8 @@ void Target::initialize() {
     //EV<<"here2";
     scheduleAt(simTime() + delta, timer);
     //EV<<"here4";
+    EV_WARN<<"target init end"<<endl;
+
 
 }
 
@@ -69,13 +73,13 @@ void Target::checkDistance(simtime_t deltaTime) {
 
     // 2. Get the graphical position (x, y) directly from the simulation engine
     // This works even if the @display string is empty/defaulted
-    auto x = atof(host->getDisplayString().getTagArg("p",0));
-    auto y = atof(host->getDisplayString().getTagArg("p",1));
+    //auto x = atof(host->par("x"));
+    auto x = host->par("x").intValue();
+    auto y = host->par("y").intValue();
     inet::Coord TargetPos;
     TargetPos.x=x;
     TargetPos.y=y;
-    inet::Coord pos(x, y);    // Look for agents in the network
-    // Fix submodules problem
+    inet::Coord pos(x, y);
     for (cModule::SubmoduleIterator it(network); !it.end(); ++it) {
         cModule * sub = *it;
         if (std::string(sub->getName()).find("agent") !=std::string::npos) {
@@ -91,11 +95,11 @@ void Target::checkDistance(simtime_t deltaTime) {
 
     if (agentPresent) {
         decreaseUncertainty(reductionRate * deltaTime.dbl());
-        uncertaintyStore.collect(uncertainty);
+        //uncertaintystore.record(uncertainty);
 
     } else {
         increaseUncertainty(decayRate * deltaTime.dbl());
-       uncertaintyStore.collect(uncertainty);
+       //uncertaintystore.record(uncertainty);
 
     }
     }}
@@ -125,10 +129,4 @@ void Target::handleMessage(cMessage *msg) {
     }
 
 }
-void Target::finish(){
-  uncertaintyStore.record();
-
-
-}
-
 

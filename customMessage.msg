@@ -13,5 +13,5 @@ message customMessage {
     
     int message_type  =   0;
 	int gate_num      =   0;
-	int uncertainty   =   0;
+	double uncertainty   =   0;
 }
