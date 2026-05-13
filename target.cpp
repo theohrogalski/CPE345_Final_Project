@@ -62,7 +62,7 @@ void target::checkDistance(simtime_t deltaTime) {
     cModule *network = getParentModule();
 
     // Look for agents in the network
-    for (int i = 0; i < network->submoduleCount(); ++i) {
+    for (int i = 0; i < network->submoduleCount(); i++) {
         cModule *sub = network->getSubmodule(i);
         if (std::string(sub->getName()).find("agent") != std::string::npos) {
             auto* am = check_and_cast<inet::IMobility *>(sub->getSubmodule("mobility"));
