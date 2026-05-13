@@ -1,5 +1,12 @@
-import inet.mobility.single.LinearMobility
+import inet.mobility
 
+simple agentMobility {
+	parameters:
+		@claass(inet::agentMobility);
+		double speed = default(10mps) @unit(mps);
+		double waitTime = default(0s) @unit(s);
+		bool isStationary = default(false);
+}
 simple Agent
 {
     parameters:
@@ -8,7 +15,9 @@ simple Agent
         input in[];
         output out[];
     submodules:
-		
+		mobility: agentMobility {
+			@display("p=50,50");
+		}
 }
 
 simple Target
@@ -16,8 +25,8 @@ simple Target
     parameters:
         int sensingRange = default(10);
     gates:
-        input in;
-        output out;
+        input in[];
+        output out[];
 }
 
 network PersistentMonitoringNetwork
@@ -65,37 +74,37 @@ network PersistentMonitoringNetwork
         }
 
     connections:
-        target1.out --> agent1.in;
-        agent1.out --> target1.in;
-        target2.out --> agent1.in;
-        agent1.out --> target2.in;
-        target3.out --> agent1.in;
-        agent1.out --> target3.in;
-        target4.out --> agent1.in;
-        agent1.out --> target4.in;
-        target5.out --> agent1.in;
-        agent1.out --> target5.in;
+        target1.out++ --> agent1.in++;
+        agent1.out++ --> target1.in++;
+        target2.out++ --> agent1.in++;
+        agent1.out++ --> target2.in++;
+        target3.out++ --> agent1.in++;
+        agent1.out++ --> target3.in++;
+        target4.out++ --> agent1.in++;
+        agent1.out++ --> target4.in++;
+        target5.out++ --> agent1.in++;
+        agent1.out++ --> target5.in++;
 
-        target1.out --> agent2.in;
-        agent2.out --> target1.in;
-        target2.out --> agent2.in;
-        agent2.out --> target2.in;
-        target3.out --> agent2.in;
-        agent2.out --> target3.in;
-        target4.out --> agent2.in;
-        agent2.out --> target4.in;
-        target5.out --> agent2.in;
-        agent2.out --> target5.in;
+        target1.out++ --> agent2.in++;
+        agent2.out++ --> target1.in++;
+        target2.out++ --> agent2.in++;
+        agent2.out++ --> target2.in++;
+        target3.out++ --> agent2.in++;
+        agent2.out++ --> target3.in++;
+        target4.out++ --> agent2.in++;
+        agent2.out++ --> target4.in++;
+        target5.out++ --> agent2.in++;
+        agent2.out++ --> target5.in++;
 
-        target1.out --> agent3.in;
-        agent3.out --> target1.in;
-        target2.out --> agent3.in;
-        agent3.out --> target2.in;
-        target3.out --> agent3.in;
-        agent3.out --> target3.in;
-        target4.out --> agent3.in;
-        agent3.out --> target4.in;
-        target5.out --> agent3.in;
-        agent3.out --> target5.in;
-
+        target1.out++ --> agent3.in++;
+        agent3.out++ --> target1.in++;
+        target2.out++ --> agent3.in++;
+        agent3.out++ --> target2.in++;
+        target3.out++ --> agent3.in++;
+        agent3.out++ --> target3.in++;
+        target4.out++ --> agent3.in++;
+        agent3.out++ --> target4.in++;
+        target5.out++ --> agent3.in++;
+        agent3.out++ --> target5.in++;
+		
 }
