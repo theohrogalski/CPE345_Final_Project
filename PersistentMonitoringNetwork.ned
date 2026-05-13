@@ -2,7 +2,7 @@ import inet.mobility
 
 simple agentMobility {
 	parameters:
-		@claass(inet::agentMobility);
+		@class(inet::agentMobility);
 		double speed = default(10mps) @unit(mps);
 		double waitTime = default(0s) @unit(s);
 		bool isStationary = default(false);
