@@ -1,4 +1,4 @@
-import inet.mobility
+import inet.mobility.agentMobility
 
 simple agentMobility {
 	parameters:
