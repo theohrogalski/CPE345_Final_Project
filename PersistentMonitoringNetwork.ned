@@ -24,7 +24,7 @@ module Agent
 simple Target
 {
     parameters:
-        double sensingRange = default(10.0m);
+        double sensingRange = default(10.0);
 		double reductionRate = default(0.5);
 		double decayRate = default(0.1);
 		double uncertainty = default(0);
