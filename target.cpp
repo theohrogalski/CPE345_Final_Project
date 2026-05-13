@@ -8,9 +8,11 @@ using namespace omnetpp;
 class target : public cSimpleModule {
 
 public:
-double uncertainty=0;
-int num_agents;
-int id=0;
+double sensingRange;
+double reductionRate;
+double decayRate;
+double uncertainty;
+int id;
 simtime_t delta;
 
 protected:
@@ -38,7 +40,6 @@ void target::initialize() {
 
 void target::increaseUncertainty(double amount) {
     uncertainty += amount;
-    if (uncertainty > 100) uncertainty = 100;
     par("uncertainty").setDoubleValue(uncertainty);
 }
 
