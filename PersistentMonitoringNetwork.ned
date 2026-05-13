@@ -8,9 +8,7 @@ simple Agent
         input in[];
         output out[];
     submodules:
-        mobility: LinearMobility {
-            
-        }
+		
 }
 
 simple Target
