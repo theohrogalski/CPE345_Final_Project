@@ -69,11 +69,12 @@ void agentMobility::setTargetPosition()
 
 void agentMobility::move()
 {
+    Coord currentPos = getCurrentPosition();
     EV << "Agent " << getParentModule()->getId() << " is first at " << currentPos.x << ", " << currentPos.y << "\n";
     EV_WARN<<"I am moving";
     LineSegmentsMobilityBase::move();
     raiseErrorIfOutside();
-    Coord currentPos = getCurrentPosition();
+    currentPos = getCurrentPosition();
     EV << "Agent " << getParentModule()->getId() << " is now at " << currentPos.x << ", " << currentPos.y << "\n";
     
 }
