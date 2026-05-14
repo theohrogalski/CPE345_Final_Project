@@ -1,173 +1,122 @@
-//
-// Copyright (C) 2005 Georg Lutz, Institut fuer Telematik, University of Karlsruhe
-// Copyright (C) 2005 OpenSim Ltd.
-//
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// Derived from aboves
-//
 #include <stdio.h>
 #include <string.h>
 #include <omnetpp.h>
+#include <algorithm> // Required for std::clamp
 #include "agentMobility.h"
-#include "customMessage_m.h"
+
 namespace inet {
 
 Define_Module(agentMobility);
 
-agentMobility::agentMobility()
-{
+agentMobility::agentMobility() {
     nextMoveIsWait = false;
 }
 
-void agentMobility::initialize(int stage)
-{
-    //EV_WARN<<"Agent initialized";
-
-    //EV_WARN<<"Agent initialized2";
-
+void agentMobility::initialize(int stage) {
     LineSegmentsMobilityBase::initialize(stage);
-    //EV_WARN<<"Agent initialized3";
 
     if (stage == INITSTAGE_LOCAL) {
         waitTimeParameter = &par("waitTime");
         hasWaitTime = waitTimeParameter->isExpression() || waitTimeParameter->doubleValue() != 0;
         speedParameter = &par("speed");
         stationary = !speedParameter->isExpression() && speedParameter->doubleValue() == 0;
-        num_targets=par("num_targets");
-           updateInterval=par("updateInterval");
+        num_targets = par("num_targets");
+        updateInterval = par("updateInterval");
+        // Ensure we don't start out of bounds
+        setInitialPosition();
     }
-    for(int i=0; i<num_targets; i++){
-            targetUncertainties.push_back(0);
 
-        }
-    //EV_WARN<<"Agent initialized4";
-
+    // Only schedule the loop once at the final stage
+    if (stage == INITSTAGE_LAST) {
+        cMessage *msg = new cMessage("actionSelection");
+        scheduleAt(simTime() + updateInterval, msg);
+    }
 }
 
-void agentMobility::setTargetPosition()
-{
-    EV_WARN<<"set  targ"<<endl;
-
+void agentMobility::setTargetPosition() {
     if (nextMoveIsWait) {
         simtime_t waitTime = waitTimeParameter->doubleValue();
         nextChange = simTime() + waitTime;
         nextMoveIsWait = false;
     }
     else {
-        if (lastPosition != targetPosition){
-        //Make change here vvvvv
-
-        double speed = speedParameter->doubleValue();
-        double distance = lastPosition.distance(targetPosition);
-
-        simtime_t travelTime = distance / speed;
-        nextChange = simTime() + travelTime;
-        nextMoveIsWait = hasWaitTime;}
-        else{nextChange = simTime() + 1.0;}
-    }
-}
-
-void agentMobility::move()
-{
-    EV_WARN<<"I am moving";
-    LineSegmentsMobilityBase::move();
-    raiseErrorIfOutside();
-}
-
-double agentMobility::getMaxSpeed() const
-{    //EV_WARN<<"get max speed"<<endl;
-
-    return speedParameter->isExpression() ? NaN : speedParameter->doubleValue();
-}
-void agentMobility::setCoordinates(Coord input){
-    //EV_WARN<<"set coord"<<endl;
-
-targetPosition=input;
-}
-void agentMobility::sendAllUncertainties(){
-    //EV_WARN<<"send all unc"<<endl;
-
-    cModule *network = getParentModule();
-
-    for (cModule::SubmoduleIterator it(network); !it.end(); ++it) {
-        cModule *submodule = *it;
-
-        if (std::string(submodule->getName()).find("target") != std::string::npos) {
-            int id_for_gate=-1;
-        for(int i=0; i<num_targets; i++){
-
-            if (std::string(submodule->getName()).find(i) != std::string::npos){
-                   id_for_gate=i;
-
-
+        // SAFETY: Use a small epsilon instead of direct != for double comparison
+        if (lastPosition.distance(targetPosition) > 0.001) {
+            double speed = speedParameter->doubleValue();
+            if (speed <= 0) {
+                nextChange = simTime() + 1.0;
+                return;
             }
+            double distance = lastPosition.distance(targetPosition);
+            simtime_t travelTime = distance / speed;
+            nextChange = simTime() + travelTime;
+            nextMoveIsWait = hasWaitTime;
         }
-        cMessage *getUnc = new cMessage("Not_empty");
-
-      sendDirect(getUnc,submodule,"in",id_for_gate);
-
+        else {
+            nextChange = simTime() + 1.0;
+        }
     }
+}
 
-}}
+void agentMobility::move() {
+    LineSegmentsMobilityBase::move();
 
-Coord agentMobility::getCoordForTarget() {
-    Coord max_target_coord = {0, 0, 0};
+
+    // FIXED: Clamp current position to prevent floating point "negative" errors
+    // before calling raiseErrorIfOutside()
+    lastPosition.x = std::max(0.0, std::min(500.0, lastPosition.x));
+    lastPosition.y = std::max(0.0, std::min(500.0, lastPosition.y));
+
+    raiseErrorIfOutside();
+
+    // Triggered movement re-evaluation
+    targetPosition = getCoordForTarget();
+    setTargetPosition();
+}
+
+inet::Coord agentMobility::getCoordForTarget() {
+    inet::Coord bestCoord = lastPosition; // Default to staying put
     double max_uncertainty = -1.0;
-    cModule *network = getParentModule();
 
+    cModule *network = getParentModule();
     targetUncertainties.clear();
 
-    cModule::SubmoduleIterator it(network);
-    while (!it.end()) {
+    for (cModule::SubmoduleIterator it(network); !it.end(); ++it) {
         cModule *sub = *it;
+        if (!sub || std::string(sub->getName()).find("target") == std::string::npos)
+            continue;
 
-        if (sub && sub->hasPar("uncertainty")) {
-            double u = sub->par("uncertainty").doubleValue();
-            targetUncertainties.push_back(u);
+        cModule *mobModule = sub->getSubmodule("mobility");
+        if (!mobModule) continue;
 
-            if (u > max_uncertainty) {
-                max_uncertainty = u;
+        auto *mob = check_and_cast<inet::IMobility *>(mobModule);
+        inet::Coord pos = mob->getCurrentPosition();
 
-                if (sub->hasPar("x") && sub->hasPar("y")) {
-                    max_target_coord.x = sub->par("x").intValue();
-                    max_target_coord.y = sub->par("y").intValue();
-                }
-            }
+        double u = sub->par("uncertainty").doubleValue();
+        targetUncertainties.push_back(u);
+
+        if (u > max_uncertainty) {
+            max_uncertainty = u;
+            bestCoord.x = std::max(0.1, std::min(499.9, pos.x));
+            bestCoord.y = std::max(0.1, std::min(499.9, pos.y));
+            bestCoord.z = 0;
         }
-        it++;
     }
-
-    return max_target_coord;
+    return bestCoord;
 }
-void agentMobility::handleMessage(cMessage *msg)
-{
-    if (msg->isSelfMessage() && strcmp(msg->getName(), "actionSelection") == 0) {
-        // 1. Get the new coord
-        inet::Coord nextTarget = getCoordForTarget();
 
-        // 2. Assign it to the PROTECTED member variable from the base class
-        // Use 'this->' to be absolutely sure you aren't hitting a local variable
-        this->targetPosition = nextTarget;
-
-        // 3. Trigger the INET math to start the move
+void agentMobility::handleMessage(cMessage *msg) {
+    if (msg->isSelfMessage()) {
+        this->targetPosition = getCoordForTarget();
         this->setTargetPosition();
-
-        // 4. Schedule next check
         scheduleAt(simTime() + updateInterval, msg);
+    } else {
+        delete msg; // Clean up direct messages if they aren't self-messages
     }
+}
+void agentMobility::setCoordinates(Coord input){
 
-    if (msg->isSelfMessage() && strcmp(msg->getName(), "actionSelection") == 0) {
-        // 1. Calculate the new destination
-        inet::Coord nextTarget = getCoordForTarget();
 
-        // 2. Update the internal member variable directly
-        this->targetPosition = nextTarget;
-
-        // 3. Trigger the base class logic to recalculate the trajectory
-        this->setTargetPosition();
-
-        scheduleAt(simTime() + updateInterval, msg);
-    }
-    // ... rest of your message handling
-}}
+}
+} // namespace inet
 

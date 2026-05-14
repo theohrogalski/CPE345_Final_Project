@@ -33,11 +33,10 @@ PROJECTRELATIVE_PATH =
 O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cpp, .msg and .sm files
-OBJS = $O/agentMobility.o $O/target.o $O/customMessage_m.o
+OBJS = $O/agentMobility.o $O/target.o
 
 # Message files
-MSGFILES = \
-    customMessage.msg
+MSGFILES =
 
 # SM files
 SMFILES =

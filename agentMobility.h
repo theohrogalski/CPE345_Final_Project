@@ -27,7 +27,7 @@ private:
   protected:
     bool nextMoveIsWait;
     cPar *speedParameter=nullptr;
-
+    Coord targetPosition;
     cPar *waitTimeParameter=nullptr;
     bool hasWaitTime;
     int num_targets;
@@ -50,7 +50,6 @@ private:
   public:
     agentMobility();
     virtual void setCoordinates(Coord input);
-    virtual double getMaxSpeed() const override;
 
 };
 
