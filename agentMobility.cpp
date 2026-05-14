@@ -58,7 +58,11 @@ void agentMobility::setTargetPosition() {
     }
 }
 
-void agentMobility::move() {
+void agentMobility::move()
+{
+    Coord currentPos = getCurrentPosition();
+    EV << "Agent " << getParentModule()->getId() << " is first at " << currentPos.x << ", " << currentPos.y << "\n";
+    EV_WARN<<"I am moving";
     LineSegmentsMobilityBase::move();
 
 
@@ -68,14 +72,49 @@ void agentMobility::move() {
     lastPosition.y = std::max(0.0, std::min(500.0, lastPosition.y));
 
     raiseErrorIfOutside();
-
-    // Triggered movement re-evaluation
-    targetPosition = getCoordForTarget();
-    setTargetPosition();
+    currentPos = getCurrentPosition();
+    EV << "Agent " << getParentModule()->getId() << " is now at " << currentPos.x << ", " << currentPos.y << "\n";
+    
 }
 
-inet::Coord agentMobility::getCoordForTarget() {
-    inet::Coord bestCoord = lastPosition; // Default to staying put
+double agentMobility::getMaxSpeed() const
+{    //EV_WARN<<"get max speed"<<endl;
+
+    return speedParameter->isExpression() ? NaN : speedParameter->doubleValue();
+}
+void agentMobility::setCoordinates(Coord input){
+    //EV_WARN<<"set coord"<<endl;
+
+targetPosition=input;
+}
+void agentMobility::sendAllUncertainties(){
+    //EV_WARN<<"send all unc"<<endl;
+
+    cModule *network = getParentModule();
+
+    for (cModule::SubmoduleIterator it(network); !it.end(); ++it) {
+        cModule *submodule = *it;
+
+        if (std::string(submodule->getName()).find("target") != std::string::npos) {
+            int id_for_gate=-1;
+        for(int i=0; i<num_targets; i++){
+
+            if (std::string(submodule->getName()).find(i) != std::string::npos){
+                   id_for_gate=i;
+
+
+            }
+        }
+        cMessage *getUnc = new cMessage("Not_empty");
+
+      sendDirect(getUnc,submodule,"in",id_for_gate);
+
+    }
+
+}}
+
+Coord agentMobility::getCoordForTarget() {
+    Coord max_target_coord = {0, 0, 0};
     double max_uncertainty = -1.0;
 
     cModule *network = getParentModule();
