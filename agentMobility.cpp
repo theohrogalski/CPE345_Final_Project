@@ -69,9 +69,13 @@ void agentMobility::setTargetPosition()
 
 void agentMobility::move()
 {
+    
     EV_WARN<<"I am moving";
     LineSegmentsMobilityBase::move();
     raiseErrorIfOutside();
+    Coord currentPos = getCurrentPosition();
+    EV << "Agent " << getParentModule()->getId() << " is at " << currentPos.x << ", " << currentPos.y << "\n";
+    
 }
 
 double agentMobility::getMaxSpeed() const
