@@ -9,7 +9,7 @@
 #ifndef __INET_RANDOMWAYPOINTMOBILITY_H
 #define __INET_RANDOMWAYPOINTMOBILITY_H
 //TODO: Fix the below broken include
-#include "inet/mobility/base/LineSegmentsMobilityBase.h"
+#include "inet/mobility/base/MobilityBase.h"
 
 namespace inet {
 
@@ -19,7 +19,7 @@ namespace inet {
  * @author Georg Lutz (georglutz AT gmx DOT de), Institut fuer Telematik,
  *  Universitaet Karlsruhe, http://www.tm.uka.de, 2004-2005
  */
-class INET_API agentMobility : public LineSegmentsMobilityBase
+class INET_API agentMobility : public MobilityBase
 {
 private:
     agentMobility *mobility;
@@ -27,30 +27,36 @@ private:
   protected:
     bool nextMoveIsWait;
     cPar *speedParameter=nullptr;
-
+    simtime_t lastUpdate;
     cPar *waitTimeParameter=nullptr;
     bool hasWaitTime;
+    double updateInterval;
     int num_targets;
-    virtual int numInitStages() const override { return NUM_INIT_STAGES; }
     virtual void handleMessage(cMessage *msg) override;
        void actionSelection();
-       std::vector<double> targetUncertainties;
 
+       std::vector<double> targetUncertainties;
+      Coord dummyCoord = Coord::ZERO;
+      Quaternion dummyQuaternion = Quaternion::IDENTITY;
+
+      // IMobility requirements
+      virtual const Coord& getCurrentPosition() override { return lastPosition; }
+      virtual const Coord& getCurrentVelocity() override { return dummyCoord; }
+      virtual const Coord& getCurrentAcceleration() override { return dummyCoord; }
+      virtual const Quaternion& getCurrentAngularPosition() override { return dummyQuaternion; }
+      virtual const Quaternion& getCurrentAngularVelocity() override { return dummyQuaternion; }
+      virtual const Quaternion& getCurrentAngularAcceleration() override { return dummyQuaternion; }
+
+      // MobilityBase requirement
+      virtual void handleSelfMessage(cMessage *msg) override { handleMessage(msg); }
+      virtual double getMaxSpeed() const override { return 100.0; }
        void sendAllUncertainties();
        Coord getCoordForTarget();
     /** @brief Initializes mobility model parameters.*/
-    virtual void initialize(int stage) override;
-
-    /** @brief Overridden from LineSegmentsMobilityBase.*/
-    virtual void setTargetPosition() override;
-
-    /** @brief Overridden from LineSegmentsMobilityBase.*/
-    virtual void move() override;
+    virtual void initialize() override;
 
   public:
     agentMobility();
-    virtual void setCoordinates(Coord input);
-    virtual double getMaxSpeed() const override;
 
 };
 

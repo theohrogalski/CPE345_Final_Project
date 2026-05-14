@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<analysis version="2">
+    <inputs>
+        <input pattern="/final_project/results/PersistentMonitoring-*.vec"/>
+        <input pattern="/final_project/results/PersistentMonitoring-*.sca"/>
+    </inputs>
+    <charts/>
+</analysis>
